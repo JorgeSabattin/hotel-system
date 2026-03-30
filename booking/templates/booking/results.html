@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultados</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+            padding: 30px;
+        }
+
+        .container {
+            width: 700px;
+            margin: auto;
+        }
+
+        .room {
+            display: flex;
+            background: white;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        .room img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .info {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .stars {
+            color: gold;
+        }
+
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: #007BFF;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏨 Habitaciones disponibles</h1>
+
+    {% if rooms %}
+        {% for room in rooms %}
+            <div class="room">
+
+                <!-- Imagen -->
+                <img src="https://picsum.photos/300/200?random={{ forloop.counter }}">
+
+                <div class="info">
+                    <h3>Habitación {{ room.room }}</h3>
+
+                    <!-- Estrellas -->
+                    <div class="stars">
+                        ⭐⭐⭐⭐☆
+                    </div>
+
+                    <p class="price">💲 ${{ room.price }}</p>
+
+                    <!-- Botón reservar -->
+                    <a href="#" class="btn">Reservar</a>
+                </div>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No hay habitaciones disponibles</p>
+    {% endif %}
+
+    <a href="/" class="btn back">⬅ Volver</a>
+</div>
+
+</body>
+</html>
