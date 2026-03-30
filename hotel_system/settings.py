@@ -26,8 +26,9 @@ SECRET_KEY = 'django-insecure-lq^=zk@(*n@v$*c*0&5jq(-2)(+gpug-wh07_kofrqdll$^1j-
 DEBUG = True
 
 #ALLOWED_HOSTS = []
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
 
+ALLOWED_HOSTS = ['hotel-system-saco.onrender.com']
 # Application definition
 
 INSTALLED_APPS = [
