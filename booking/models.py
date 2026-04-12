@@ -45,6 +45,8 @@ class UserProfile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    rut = models.CharField(max_length=12, blank=True, default='')
+    address = models.CharField(max_length=200, blank=True, default='')
     phone = models.CharField(max_length=20, blank=True, default='')
     photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
     language = models.CharField(max_length=5, choices=LANGUAGE_CHOICES, default='es')

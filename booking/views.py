@@ -1,10 +1,27 @@
 from django.shortcuts import render, redirect
 from .models import Room, Reservation, UserProfile
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django import forms
+
+
+# ────────────────────────────────────────────
+# FORMULARIO DE REGISTRO
+# ────────────────────────────────────────────
+class RegisterForm(UserCreationForm):
+    first_name = forms.CharField(max_length=50, required=True, label='Nombre')
+    last_name = forms.CharField(max_length=50, required=True, label='Apellido')
+    email = forms.EmailField(required=True, label='Email')
+    rut = forms.CharField(max_length=12, required=True, label='RUT')
+    address = forms.CharField(max_length=200, required=True, label='Dirección')
+    phone = forms.CharField(max_length=20, required=True, label='Teléfono')
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
 
 
 # ────────────────────────────────────────────
@@ -17,8 +34,10 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['phone', 'photo', 'language', 'preferred_room_type']
+        fields = ['rut', 'address', 'phone', 'photo', 'language', 'preferred_room_type']
         labels = {
+            'rut': 'RUT',
+            'address': 'Dirección',
             'phone': 'Teléfono',
             'photo': 'Foto de perfil',
             'language': 'Idioma preferido',
@@ -53,7 +72,7 @@ def search(request):
     check_in_date = datetime.strptime(check_in, "%Y-%m-%d").date()
     check_out_date = datetime.strptime(check_out, "%Y-%m-%d").date()
 
-    nights = (check_out_date - check_in_date).days  # ✅ calcular aquí
+    nights = (check_out_date - check_in_date).days
 
     overlapping_reservations = Reservation.objects.filter(
         check_in__lt=check_out_date,
@@ -66,8 +85,9 @@ def search(request):
         'rooms': available_rooms,
         'check_in': check_in,
         'check_out': check_out,
-        'nights': nights  # ✅ pasar como entero
+        'nights': nights
     })
+
 
 # ────────────────────────────────────────────
 # RESERVAR
@@ -126,9 +146,17 @@ def cancel_reservation(request, reservation_id):
 
 
 # ────────────────────────────────────────────
+# ADMIN CHECK
+# ────────────────────────────────────────────
+def is_admin(user):
+    return user.is_staff
+
+
+# ────────────────────────────────────────────
 # AGREGAR HABITACIÓN
 # ────────────────────────────────────────────
 @login_required
+@user_passes_test(is_admin, login_url='/')
 def add_room(request):
     if request.method == 'POST':
         Room.objects.create(
@@ -137,8 +165,34 @@ def add_room(request):
             price=request.POST.get('price'),
             description=request.POST.get('description')
         )
-        return redirect('/')
+        from django.contrib import messages
+        messages.success(request, '✅ Habitación creada correctamente.')
+        return redirect('/add-room/')
     return render(request, 'booking/add_room.html')
+
+
+# ────────────────────────────────────────────
+# PANEL ADMIN
+# ────────────────────────────────────────────
+@login_required
+@user_passes_test(is_admin, login_url='/')
+def admin_panel(request):
+    reservations = Reservation.objects.select_related('user', 'room').order_by('-check_in')
+    rooms = Room.objects.all()
+    return render(request, 'booking/admin_panel.html', {
+        'reservations': reservations,
+        'rooms': rooms,
+    })
+
+
+# ────────────────────────────────────────────
+# ELIMINAR HABITACIÓN
+# ────────────────────────────────────────────
+@login_required
+@user_passes_test(is_admin, login_url='/')
+def delete_room(request, room_id):
+    Room.objects.filter(id=room_id).delete()
+    return redirect('/admin-panel/')
 
 
 # ────────────────────────────────────────────
@@ -161,12 +215,10 @@ def edit_profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile_obj, user=request.user)
         if form.is_valid():
-            # Guardar datos del User
             request.user.first_name = form.cleaned_data['first_name']
             request.user.last_name = form.cleaned_data['last_name']
             request.user.email = form.cleaned_data['email']
             request.user.save()
-            # Guardar UserProfile
             form.save()
             return redirect('/profile/')
     else:
@@ -180,12 +232,31 @@ def edit_profile(request):
 # ────────────────────────────────────────────
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            UserProfile.objects.create(user=user)  # Crear perfil automáticamente
+            user = form.save(commit=False)
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.save()
+            UserProfile.objects.create(
+                user=user,
+                rut=form.cleaned_data['rut'],
+                address=form.cleaned_data['address'],
+                phone=form.cleaned_data['phone'],
+            )
             login(request, user)
             return redirect('/')
-    else:
-        form = UserCreationForm()
-    return render(request, 'booking/register.html', {'form': form})
+        else:
+            return render(request, 'booking/login.html', {
+                'register_form': form,
+                'register_error': True
+            })
+    return redirect('/login/')
+
+
+# ────────────────────────────────────────────
+# DESPEDIDA
+# ────────────────────────────────────────────
+def goodbye(request):
+    return render(request, 'booking/goodbye.html')

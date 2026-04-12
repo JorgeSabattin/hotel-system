@@ -1,0 +1,92 @@
+{% extends "booking/base.html" %}
+{% block title %}Grand Reserve · Panel Admin{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 10px 12px; border-bottom: 2px solid var(--border); }
+    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <p class="eyebrow">Administración</p>
+    <h1>Panel de control</h1>
+</div>
+
+<div class="admin-grid">
+
+    <!-- HABITACIONES -->
+    <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h2 class="section-title">Habitaciones</h2>
+            <a href="/add-room/" class="btn btn-gold" style="padding:8px 20px; font-size:0.72rem;">+ Nueva</a>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tipo</th>
+                        <th>Capacidad</th>
+                        <th>Precio</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for room in rooms %}
+                    <tr>
+                        <td>{{ room.id }}</td>
+                        <td>{{ room.get_room_type_display }}</td>
+                        <td>{{ room.capacity }} pers.</td>
+                        <td>${{ room.price }}</td>
+                        <td>
+                            <a href="/delete-room/{{ room.id }}/" class="btn btn-danger"
+                               onclick="return confirm('¿Eliminar habitación #{{ room.id }}?')">
+                               Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" style="color:var(--muted); text-align:center; padding:24px;">Sin habitaciones</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- RESERVAS -->
+    <div>
+        <h2 class="section-title" style="margin-bottom:16px;">Todas las reservas</h2>
+        <div class="card" style="padding:0; overflow:hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Habitación</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for r in reservations %}
+                    <tr>
+                        <td>{{ r.user.username }}</td>
+                        <td>#{{ r.room.id }} {{ r.room.get_room_type_display }}</td>
+                        <td>{{ r.check_in }}</td>
+                        <td>{{ r.check_out }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4" style="color:var(--muted); text-align:center; padding:24px;">Sin reservas</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

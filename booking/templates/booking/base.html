@@ -69,7 +69,30 @@
 
         .nav-links a:hover { color: var(--gold); }
         .nav-links .divider { color: #444; }
-        .nav-links .username { color: var(--gold-light); font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1rem; letter-spacing: 0.05em; text-transform: none; }
+        .nav-links .username {
+            color: var(--gold-light);
+            font-style: italic;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: none;
+        }
+
+        /* ── LOGOUT BUTTON ── */
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #ccc5bb;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .logout-btn:hover { color: var(--gold); }
 
         /* ── MESSAGES ── */
         .messages {
@@ -199,15 +222,6 @@
         }
         .btn-gold:hover { background: var(--dark); color: var(--gold); }
 
-        /* ── DIVIDER ── */
-        .ornament {
-            text-align: center;
-            color: var(--gold);
-            letter-spacing: 0.5em;
-            font-size: 0.7rem;
-            margin: 32px 0;
-        }
-
         /* ── FOOTER ── */
         footer {
             text-align: center;
@@ -246,16 +260,23 @@
             <span class="username">{{ user.username }}</span>
             <span class="divider">|</span>
             <a href="/my-reservations/">Mis reservas</a>
+            <span class="divider">|</span>
+            <a href="/profile/">Mi perfil</a>
             {% if user.is_staff %}
+                <span class="divider">|</span>
+                <a href="/admin-panel/">Panel Admin</a>
                 <span class="divider">|</span>
                 <a href="/add-room/">+ Habitación</a>
             {% endif %}
             <span class="divider">|</span>
-            <a href="/logout/">Salir</a>
+            <form method="POST" action="/logout/" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Salir</button>
+            </form>
         {% else %}
             <a href="/login/">Iniciar sesión</a>
             <span class="divider">|</span>
-            <a href="/register/">Registrarse</a>
+            <a href="/login/">Registrarse</a>
         {% endif %}
     </div>
 </nav>
