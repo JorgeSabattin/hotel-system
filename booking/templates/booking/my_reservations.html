@@ -1,0 +1,139 @@
+{% extends "booking/base.html" %}
+{% block title %}Grand Reserve · Mis reservas{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .reservations-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .reservation-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 28px 32px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: center;
+        transition: box-shadow 0.2s;
+    }
+    .reservation-card:hover {
+        box-shadow: 0 4px 20px rgba(26,23,20,0.07);
+    }
+
+    .res-main {}
+    .res-type {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        color: var(--dark);
+        margin-bottom: 4px;
+    }
+    .res-id {
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 16px;
+    }
+    .res-dates {
+        display: flex;
+        gap: 24px;
+    }
+    .res-date-item label {
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 4px;
+    }
+    .res-date-item span {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--dark);
+    }
+
+    .res-actions {
+        text-align: right;
+    }
+    .res-price {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem;
+        color: var(--gold);
+        margin-bottom: 12px;
+        display: block;
+    }
+    .res-price-label {
+        font-size: 0.65rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 12px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 24px;
+        color: var(--muted);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .empty-state h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        font-weight: 300;
+        color: var(--dark);
+        margin-bottom: 12px;
+    }
+    .empty-state .btn { margin-top: 24px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <p class="eyebrow">Tu cuenta</p>
+    <h1>Mis Reservas</h1>
+</div>
+
+{% if reservations %}
+<div class="reservations-list">
+    {% for r in reservations %}
+    <div class="reservation-card">
+        <div class="res-main">
+            <div class="res-type">{{ r.room.get_room_type_display }}</div>
+            <div class="res-id">Habitación #{{ r.room.id }}</div>
+            <div class="res-dates">
+                <div class="res-date-item">
+                    <label>Check-in</label>
+                    <span>{{ r.check_in }}</span>
+                </div>
+                <div class="res-date-item">
+                    <label>Check-out</label>
+                    <span>{{ r.check_out }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="res-actions">
+            <span class="res-price-label">Precio / noche</span>
+            <span class="res-price">${{ r.room.price }}</span>
+            <a href="/cancel/{{ r.id }}/" class="btn btn-danger">Cancelar</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="empty-state">
+    <h2>Sin reservas aún</h2>
+    <p>Cuando realices una reserva aparecerá aquí.</p>
+    <a href="/" class="btn">Buscar habitaciones</a>
+</div>
+{% endif %}
+{% endblock %}

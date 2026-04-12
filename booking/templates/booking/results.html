@@ -1,103 +1,202 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Resultados</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f6f8;
-            padding: 30px;
-        }
+{% extends "booking/base.html" %}
+{% block title %}Grand Reserve · Habitaciones disponibles{% endblock %}
 
-        .container {
-            width: 700px;
-            margin: auto;
-        }
+{% block extra_styles %}
+<style>
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+    }
 
-        .room {
-            display: flex;
-            background: white;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-        }
+    .room-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .room-card:hover {
+        box-shadow: 0 8px 32px rgba(26,23,20,0.1);
+        transform: translateY(-2px);
+    }
 
-        .room img {
-            width: 200px;
-            height: 150px;
-            object-fit: cover;
-        }
+    .room-card-header {
+        background: var(--dark);
+        padding: 24px;
+        position: relative;
+    }
+    .room-card-header .room-type {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: var(--white);
+        margin-bottom: 4px;
+    }
+    .room-card-header .room-id {
+        font-size: 0.72rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--gold);
+    }
+    .room-card-header .badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
 
-        .info {
-            padding: 15px;
-            flex: 1;
-        }
+    .room-card-body {
+        padding: 24px;
+    }
+    .room-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    .meta-item label {
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+    .meta-item .value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--dark);
+    }
+    .meta-item .value.price {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.4rem;
+        color: var(--gold);
+    }
 
-        .stars {
-            color: gold;
-        }
+    .room-description {
+        font-size: 0.85rem;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 20px;
+        min-height: 40px;
+    }
 
-        .price {
-            font-size: 18px;
-            font-weight: bold;
-        }
+    .total-line {
+        background: var(--cream);
+        border-radius: 4px;
+        padding: 10px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 0.83rem;
+    }
+    .total-line span { color: var(--muted); }
+    .total-line strong {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.1rem;
+        color: var(--dark);
+    }
 
-        .btn {
-            background: #007BFF;
-            color: white;
-            padding: 10px;
-            text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
-            margin-top: 10px;
-        }
+    .room-card .btn { width: 100%; text-align: center; }
 
-        .btn:hover {
-            background: #0056b3;
-        }
+    .empty-state {
+        text-align: center;
+        padding: 80px 24px;
+        color: var(--muted);
+    }
+    .empty-state h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        font-weight: 300;
+        color: var(--dark);
+        margin-bottom: 12px;
+    }
 
-        .back {
-            display: inline-block;
-            margin-top: 20px;
-            background: #28a745;
-        }
-    </style>
-</head>
-<body>
+    .search-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 36px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border);
+    }
+    .search-summary h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        font-weight: 300;
+    }
+    .search-summary .dates {
+        font-size: 0.83rem;
+        color: var(--muted);
+    }
+    .search-summary .dates strong { color: var(--dark); }
+</style>
+{% endblock %}
 
-<div class="container">
-    <h1>🏨 Habitaciones disponibles</h1>
+{% block content %}
+<a href="/" class="back-link">← Volver</a>
 
-    {% if rooms %}
-        {% for room in rooms %}
-            <div class="room">
-
-                <!-- Imagen -->
-                <img src="https://picsum.photos/300/200?random={{ forloop.counter }}">
-
-                <div class="info">
-                    <h3>Habitación {{ room.room }}</h3>
-
-                    <!-- Estrellas -->
-                    <div class="stars">
-                        ⭐⭐⭐⭐☆
-                    </div>
-
-                    <p class="price">💲 ${{ room.price }}</p>
-
-                    <!-- Botón reservar -->
-                    <a href="#" class="btn">Reservar</a>
-                </div>
-
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No hay habitaciones disponibles</p>
-    {% endif %}
-
-    <a href="/" class="btn back">⬅ Volver</a>
+<div class="search-summary">
+    <h1>Habitaciones disponibles</h1>
+    <div class="dates">
+        <strong>{{ check_in }}</strong> → <strong>{{ check_out }}</strong>
+        &nbsp;·&nbsp; {{ nights }} noche{{ nights|pluralize }}
+    </div>
 </div>
 
-</body>
-</html>
+{% if rooms %}
+<div class="results-grid">
+    {% for room in rooms %}
+    <div class="room-card">
+        <div class="room-card-header">
+            <div class="room-type">{{ room.get_room_type_display }}</div>
+            <div class="room-id">Habitación #{{ room.id }}</div>
+            <span class="badge">Disponible</span>
+        </div>
+        <div class="room-card-body">
+            <div class="room-meta">
+                <div class="meta-item">
+                    <label>Precio / noche</label>
+                    <div class="value price">${{ room.price }}</div>
+                </div>
+                <div class="meta-item">
+                    <label>Capacidad</label>
+                    <div class="value">{{ room.capacity }} persona{{ room.capacity|pluralize }}</div>
+                </div>
+            </div>
+
+            {% if room.description %}
+            <p class="room-description">{{ room.description }}</p>
+            {% endif %}
+
+            <div class="total-line">
+                <span>Total estimado ({{ nights }} noche{{ nights|pluralize }})</span>
+                <strong>${{ room.price|floatformat:0 }} × {{ nights }} noches</strong>            </div>
+
+            <form action="/reserve/" method="GET">
+                <input type="hidden" name="room_id" value="{{ room.id }}">
+                <input type="hidden" name="check_in" value="{{ check_in }}">
+                <input type="hidden" name="check_out" value="{{ check_out }}">
+                <button type="submit" class="btn btn-gold">Reservar ahora</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="empty-state">
+    <h2>Sin disponibilidad</h2>
+    <p>No hay habitaciones disponibles para las fechas seleccionadas.</p>
+    <br>
+    <a href="/" class="btn btn-outline">Cambiar fechas</a>
+</div>
+{% endif %}
+{% endblock %}

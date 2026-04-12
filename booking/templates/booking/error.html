@@ -1,0 +1,39 @@
+{% extends "booking/base.html" %}
+{% block title %}Grand Reserve · Error{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .error-state {
+        text-align: center;
+        padding: 80px 24px;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+    .error-icon {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+    }
+    .error-state h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        font-weight: 300;
+        color: var(--dark);
+        margin-bottom: 12px;
+    }
+    .error-state p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 32px;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-state">
+    <div class="error-icon">⚠️</div>
+    <h2>Algo salió mal</h2>
+    <p>{{ message }}</p>
+    <a href="/" class="btn btn-outline">Volver al inicio</a>
+</div>
+{% endblock %}

@@ -1,61 +1,139 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Hotel System</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f6f8;
-            text-align: center;
-            padding: 50px;
-        }
+{% extends "booking/base.html" %}
+{% block title %}Grand Reserve · Buscar habitaciones{% endblock %}
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 400px;
-            margin: auto;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-        }
+{% block extra_styles %}
+<style>
+    .hero {
+        text-align: center;
+        padding: 64px 0 48px;
+    }
+    .hero .eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 16px;
+    }
+    .hero h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 3.8rem;
+        font-weight: 300;
+        line-height: 1.1;
+        color: var(--dark);
+        margin-bottom: 16px;
+    }
+    .hero h1 em {
+        font-style: italic;
+        color: var(--gold);
+    }
+    .hero p {
+        color: var(--muted);
+        font-size: 0.95rem;
+        margin-bottom: 48px;
+    }
 
-        h1 {
-            color: #333;
-        }
+    .search-card {
+        max-width: 520px;
+        margin: 0 auto;
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 40px;
+        box-shadow: 0 4px 32px rgba(26,23,20,0.06);
+    }
 
-        input {
-            padding: 10px;
-            margin: 10px;
-            width: 80%;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
+    .search-card h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem;
+        font-weight: 400;
+        color: var(--dark);
+        margin-bottom: 28px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+    }
 
-        button {
-            padding: 10px 20px;
-            background: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    .date-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
 
-        button:hover {
-            background: #0056b3;
-        }
-    </style>
-</head>
-<body>
+    .field-group { margin-bottom: 0; }
 
-<div class="container">
-    <h1>🏨 Buscar habitaciones</h1>
+    .search-card .btn {
+        width: 100%;
+        text-align: center;
+        margin-top: 8px;
+    }
 
+    .features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 64px;
+        padding-top: 64px;
+        border-top: 1px solid var(--border);
+    }
+    .feature {
+        text-align: center;
+    }
+    .feature .icon {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+    }
+    .feature h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-bottom: 8px;
+    }
+    .feature p {
+        font-size: 0.83rem;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <p class="eyebrow">Bienvenido</p>
+    <h1>Vive la experiencia<br><em>Grand Reserve</em></h1>
+    <p>Encuentra y reserva la habitación perfecta para tu estadía.</p>
+</div>
+
+<div class="search-card">
+    <h2>Consultar disponibilidad</h2>
     <form action="/search/" method="get">
-        <input type="date" name="check_in" required><br>
-        <input type="date" name="check_out" required><br>
-        <button type="submit">Buscar</button>
+        <div class="date-row">
+            <div class="field-group">
+                <label for="check_in">Check-in</label>
+                <input type="date" id="check_in" name="check_in" required>
+            </div>
+            <div class="field-group">
+                <label for="check_out">Check-out</label>
+                <input type="date" id="check_out" name="check_out" required>
+            </div>
+        </div>
+        <button type="submit" class="btn">Buscar habitaciones</button>
     </form>
 </div>
 
-</body>
-</html>
+<div class="features">
+    <div class="feature">
+        <div class="icon">🛎</div>
+        <h3>Habitaciones selectas</h3>
+        <p>Simple, doble y suite, cada una cuidadosamente acondicionada.</p>
+    </div>
+    <div class="feature">
+        <div class="icon">📅</div>
+        <h3>Reserva instantánea</h3>
+        <p>Confirma tu estancia en segundos, sin intermediarios.</p>
+    </div>
+    <div class="feature">
+        <div class="icon">✦</div>
+        <h3>Gestión flexible</h3>
+        <p>Revisa y cancela tus reservas cuando lo necesites.</p>
+    </div>
+</div>
+{% endblock %}

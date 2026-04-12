@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Grand Reserve{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #f7f3ee;
+            --dark: #1a1714;
+            --gold: #b89a6a;
+            --gold-light: #d4b896;
+            --muted: #8a7f74;
+            --border: #e0d8ce;
+            --white: #ffffff;
+            --error: #c0392b;
+            --success: #2d6a4f;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--cream);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* ── NAV ── */
+        nav {
+            background: var(--dark);
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 0.12em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a, .nav-links span {
+            color: #ccc5bb;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links .divider { color: #444; }
+        .nav-links .username { color: var(--gold-light); font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1rem; letter-spacing: 0.05em; text-transform: none; }
+
+        /* ── MESSAGES ── */
+        .messages {
+            max-width: 700px;
+            margin: 24px auto 0;
+            padding: 0 24px;
+        }
+        .message {
+            padding: 14px 20px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            margin-bottom: 10px;
+        }
+        .message.error { background: #fdf0ef; border-left: 3px solid var(--error); color: var(--error); }
+        .message.success { background: #edf7f2; border-left: 3px solid var(--success); color: var(--success); }
+
+        /* ── MAIN CONTENT ── */
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .page-header .eyebrow {
+            font-size: 0.72rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+        .page-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: var(--dark);
+            line-height: 1.1;
+        }
+        .page-header .subtitle {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 36px 40px;
+        }
+
+        /* ── FORM ELEMENTS ── */
+        label {
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        input[type="date"],
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--cream);
+            font-family: 'Jost', sans-serif;
+            font-size: 0.95rem;
+            color: var(--dark);
+            transition: border-color 0.2s;
+            outline: none;
+            margin-bottom: 20px;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--gold);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 36px;
+            background: var(--dark);
+            color: var(--gold);
+            font-family: 'Jost', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn:hover { background: var(--gold); color: var(--dark); }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--dark);
+            color: var(--dark);
+        }
+        .btn-outline:hover { background: var(--dark); color: var(--gold); }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid #d9a09a;
+            color: var(--error);
+            padding: 8px 20px;
+            font-size: 0.72rem;
+        }
+        .btn-danger:hover { background: var(--error); color: white; border-color: var(--error); }
+
+        .btn-gold {
+            background: var(--gold);
+            color: var(--dark);
+        }
+        .btn-gold:hover { background: var(--dark); color: var(--gold); }
+
+        /* ── DIVIDER ── */
+        .ornament {
+            text-align: center;
+            color: var(--gold);
+            letter-spacing: 0.5em;
+            font-size: 0.7rem;
+            margin: 32px 0;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 32px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            letter-spacing: 0.05em;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        a { color: var(--gold); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* ── BACK LINK ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 36px;
+        }
+        .back-link:hover { color: var(--gold); text-decoration: none; }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-brand">Grand Reserve</a>
+    <div class="nav-links">
+        {% if user.is_authenticated %}
+            <span class="username">{{ user.username }}</span>
+            <span class="divider">|</span>
+            <a href="/my-reservations/">Mis reservas</a>
+            {% if user.is_staff %}
+                <span class="divider">|</span>
+                <a href="/add-room/">+ Habitación</a>
+            {% endif %}
+            <span class="divider">|</span>
+            <a href="/logout/">Salir</a>
+        {% else %}
+            <a href="/login/">Iniciar sesión</a>
+            <span class="divider">|</span>
+            <a href="/register/">Registrarse</a>
+        {% endif %}
+    </div>
+</nav>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer>
+    &copy; Grand Reserve &nbsp;·&nbsp; Sistema de reservas
+</footer>
+
+</body>
+</html>
