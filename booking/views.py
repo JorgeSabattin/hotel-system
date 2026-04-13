@@ -226,6 +226,33 @@ def edit_profile(request):
 
     return render(request, 'booking/edit_profile.html', {'form': form})
 
+# 📋 CATÁLOGO DE HABITACIONES
+
+# 📋 CATÁLOGO DE HABITACIONES
+def catalog(request):
+    check_in = request.GET.get('check_in')
+    check_out = request.GET.get('check_out')
+
+    if check_in and check_out:
+        from datetime import datetime
+        check_in_date = datetime.strptime(check_in, "%Y-%m-%d").date()
+        check_out_date = datetime.strptime(check_out, "%Y-%m-%d").date()
+
+        # Excluir habitaciones ocupadas en esas fechas
+        occupied = Reservation.objects.filter(
+            check_in__lt=check_out_date,
+            check_out__gt=check_in_date
+        ).values_list('room_id', flat=True)
+
+        rooms = Room.objects.exclude(id__in=occupied).order_by('room_type')
+    else:
+        rooms = Room.objects.all().order_by('room_type')
+
+    return render(request, 'booking/catalog.html', {
+        'rooms': rooms,
+        'check_in': check_in,
+        'check_out': check_out
+    })
 
 # ────────────────────────────────────────────
 # REGISTRO

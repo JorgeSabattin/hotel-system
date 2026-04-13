@@ -92,6 +92,19 @@
         color: var(--muted);
         line-height: 1.6;
     }
+    .feature-link {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-bottom: 8px;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+    .feature-link:hover {
+        color: var(--gold);
+    }
 </style>
 {% endblock %}
 
@@ -122,18 +135,26 @@
 <div class="features">
     <div class="feature">
         <div class="icon">🛎</div>
-        <h3>Habitaciones selectas</h3>
+        <a href="/catalog/" class="feature-link">Habitaciones selectas</a>
         <p>Simple, doble y suite, cada una cuidadosamente acondicionada.</p>
     </div>
     <div class="feature">
         <div class="icon">📅</div>
-        <h3>Reserva instantánea</h3>
+        <a href="#" onclick="goToInstantCatalog(); return false;" class="feature-link">Reserva instantánea</a>
         <p>Confirma tu estancia en segundos, sin intermediarios.</p>
     </div>
     <div class="feature">
         <div class="icon">✦</div>
-        <h3>Gestión flexible</h3>
+        <a href="/my-reservations/" class="feature-link">Gestión flexible</a>
         <p>Revisa y cancela tus reservas cuando lo necesites.</p>
     </div>
 </div>
+
+<script>
+function goToInstantCatalog() {
+    const today = new Date().toISOString().split('T')[0];
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+    window.location.href = `/catalog/?check_in=${today}&check_out=${tomorrow}`;
+}
+</script>
 {% endblock %}
