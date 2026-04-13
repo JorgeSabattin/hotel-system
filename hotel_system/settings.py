@@ -2,18 +2,12 @@ from pathlib import Path
 import os
 import dj_database_url
 
-# 📁 Base
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 🔐 Seguridad
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-key')
-
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com']
 
-
-# 📦 Aplicaciones
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -21,11 +15,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'booking',  # ✅ TU APP
+    'booking',
 ]
 
-# ⚙️ Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -37,10 +29,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# 🔗 URLs
 ROOT_URLCONF = 'hotel_system.urls'
 
-# 🎨 Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -52,24 +42,18 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'booking.context_processors.admin_context',  # ✅ nuevo
             ],
         },
     },
 ]
 
-# 🚀 WSGI
 WSGI_APPLICATION = 'hotel_system.wsgi.application'
 
-# 🗄️ Base de datos
-# Usa PostgreSQL en Render (DATABASE_URL), SQLite en local
 DATABASE_URL = os.environ.get('DATABASE_URL')
-
 if DATABASE_URL:
     DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600
-        )
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
 else:
     DATABASES = {
@@ -79,32 +63,24 @@ else:
         }
     }
 
-# 🔐 Validaciones
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
 ]
 
-# 🌍 Idioma / zona
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 Archivos estáticos
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# 🖼️ Archivos de media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# 🔐 Login / logout
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# 🔑 Default ID
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

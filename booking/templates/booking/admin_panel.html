@@ -1,92 +1,204 @@
 {% extends "booking/base.html" %}
-{% block title %}Grand Reserve · Panel Admin{% endblock %}
+{% block title %}Grand Reserve · Panel Administrador{% endblock %}
 
 {% block extra_styles %}
 <style>
-    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th { text-align: left; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 10px 12px; border-bottom: 2px solid var(--border); }
-    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 16px; }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 48px;
+    }
+    .stat-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 28px 32px;
+        text-align: center;
+    }
+    .stat-card .stat-number {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 3rem;
+        font-weight: 300;
+        color: var(--gold);
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+    .stat-card .stat-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+    }
+    .section-header h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.6rem;
+        font-weight: 400;
+        color: var(--dark);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 48px;
+    }
+    thead {
+        background: var(--dark);
+    }
+    thead th {
+        padding: 14px 20px;
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        text-align: left;
+        font-weight: 400;
+    }
+    tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #faf7f3; }
+    tbody td {
+        padding: 14px 20px;
+        font-size: 0.88rem;
+        color: var(--dark);
+    }
+    .badge {
+        display: inline-block;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 2px;
+    }
+    .badge-simple { background: #eef0f2; color: #555; border: 1px solid #d0d4d8; }
+    .badge-doble  { background: #f0ece4; color: #7a6a50; border: 1px solid #d4c9b5; }
+    .badge-suite  { background: #f5f0e8; color: #8a6a2a; border: 1px solid var(--gold); }
+
+    .empty-row td {
+        text-align: center;
+        padding: 40px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        letter-spacing: 0.1em;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+
 <div class="page-header">
     <p class="eyebrow">Administración</p>
     <h1>Panel de control</h1>
+    <p class="subtitle">Gestión de habitaciones y reservas</p>
 </div>
 
-<div class="admin-grid">
-
-    <!-- HABITACIONES -->
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <h2 class="section-title">Habitaciones</h2>
-            <a href="/add-room/" class="btn btn-gold" style="padding:8px 20px; font-size:0.72rem;">+ Nueva</a>
-        </div>
-        <div class="card" style="padding:0; overflow:hidden;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Tipo</th>
-                        <th>Capacidad</th>
-                        <th>Precio</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for room in rooms %}
-                    <tr>
-                        <td>{{ room.id }}</td>
-                        <td>{{ room.get_room_type_display }}</td>
-                        <td>{{ room.capacity }} pers.</td>
-                        <td>${{ room.price }}</td>
-                        <td>
-                            <a href="/delete-room/{{ room.id }}/" class="btn btn-danger"
-                               onclick="return confirm('¿Eliminar habitación #{{ room.id }}?')">
-                               Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr><td colspan="5" style="color:var(--muted); text-align:center; padding:24px;">Sin habitaciones</td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<!-- ── ESTADÍSTICAS ── -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ rooms.count }}</div>
+        <div class="stat-label">Habitaciones</div>
     </div>
-
-    <!-- RESERVAS -->
-    <div>
-        <h2 class="section-title" style="margin-bottom:16px;">Todas las reservas</h2>
-        <div class="card" style="padding:0; overflow:hidden;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Habitación</th>
-                        <th>Check-in</th>
-                        <th>Check-out</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for r in reservations %}
-                    <tr>
-                        <td>{{ r.user.username }}</td>
-                        <td>#{{ r.room.id }} {{ r.room.get_room_type_display }}</td>
-                        <td>{{ r.check_in }}</td>
-                        <td>{{ r.check_out }}</td>
-                    </tr>
-                {% empty %}
-                    <tr><td colspan="4" style="color:var(--muted); text-align:center; padding:24px;">Sin reservas</td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ reservations.count }}</div>
+        <div class="stat-label">Reservas activas</div>
     </div>
-
+    <div class="stat-card">
+        <div class="stat-number">{{ rooms.count|add:reservations.count }}</div>
+        <div class="stat-label">Registros totales</div>
+    </div>
 </div>
+
+<!-- ── HABITACIONES ── -->
+<div class="section-header">
+    <h2>Habitaciones</h2>
+    <a href="/add-room/" class="btn">+ Nueva habitación</a>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Tipo</th>
+            <th>Capacidad</th>
+            <th>Precio / noche</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for room in rooms %}
+        <tr>
+            <td>{{ room.id }}</td>
+            <td><span class="badge badge-{{ room.room_type }}">{{ room.get_room_type_display }}</span></td>
+            <td>👤 {{ room.capacity }}</td>
+            <td>${{ room.price }}</td>
+            <td style="color:var(--muted);">{{ room.description|default:"—"|truncatechars:50 }}</td>
+            <td>
+                <a href="/delete-room/{{ room.id }}/"
+                   class="btn btn-danger"
+                   onclick="return confirm('¿Eliminar habitación #{{ room.id }}?')">
+                   Eliminar
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="6">No hay habitaciones registradas</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- ── RESERVAS ── -->
+<div class="section-header">
+    <h2>Todas las reservas</h2>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Usuario</th>
+            <th>Habitación</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in reservations %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.user.username }}</td>
+            <td><span class="badge badge-{{ r.room.room_type }}">{{ r.room.get_room_type_display }} #{{ r.room.id }}</span></td>
+            <td>{{ r.check_in }}</td>
+            <td>{{ r.check_out }}</td>
+            <td>
+                <a href="/cancel/{{ r.id }}/"
+                   class="btn btn-danger"
+                   onclick="return confirm('¿Cancelar esta reserva?')">
+                   Cancelar
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="6">No hay reservas registradas</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
